@@ -5,7 +5,7 @@ import math
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 
-from functions import read_file
+from functions import read_file, get_screen_dimensions
 
 start, goal, map, obstacles, dist_s, dist_g = read_file("input.txt")
 
@@ -18,11 +18,20 @@ dist_transform_s_obstacles = dist_transform_s+obstacles*max_value
 # Define plots
 fig, (ax_map, ax_dist) = plt.subplots(1,2)
 fig.tight_layout()
-# Map (black and white)
-ax_map.imshow(map, cmap=plt.cm.gray, origin='lower')
 
 fig.subplots_adjust(bottom=0.03, top=0.97, left=0.03, right=0.97)
 fig.subplots_adjust(wspace=0.1, hspace=0.1)
+
+width_in, height_in = get_screen_dimensions()
+fig.set_size_inches(round(width_in)-1,round(height_in)-1)
+
+# Map (black and white)
+ax_map.imshow(map, cmap=plt.cm.gray, origin='lower')
+
+ax_map.scatter(*start, c='r', s=100)
+ax_map.annotate('START', xy=(start[0]-0.3,start[1]+0.3))
+ax_map.scatter(*goal, c='b', s=100)
+ax_map.annotate('GOAL', xy=(goal[0]-0.3,goal[1]+0.3))
 
 horizontal_min, horizontal_max, horizontal_stepsize = 0, 23, 1
 vertical_min, vertical_max, vertical_stepsize = 0, 10, 1

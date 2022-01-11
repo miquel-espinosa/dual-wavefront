@@ -1,4 +1,5 @@
 import numpy as np
+import tkinter as tk
 
 def read_file(txt):
     with open(txt) as file:
@@ -17,13 +18,26 @@ def read_file(txt):
                 char = lines[i][j]
                 reversed_char = lines[i][j]
                 if char == 's':
-                    start = [i,j]
+                    start = [j,i]
                     dist_s[i][j] = 0
                 if char == 'g':
-                    goal = [i,j]
+                    goal = [j,i]
                     dist_g[i][j] = 0
                 if char == 'o': # If obstacle
                     map[i][j] = 0
                     obstacles[i][j] = 1
 
     return start, goal, map, obstacles, dist_s, dist_g
+
+
+def get_screen_dimensions():
+    root = tk.Tk()
+    root.update_idletasks()
+    root.attributes('-zoomed', True)
+    root.state('iconic')
+    geometry = root.winfo_geometry()
+    dpi = root.winfo_fpixels('1i')
+    root.destroy()
+    width = int(geometry.split('x')[0])
+    height = int(geometry.split('x')[1].split('+')[0])
+    return width/dpi, height/dpi
