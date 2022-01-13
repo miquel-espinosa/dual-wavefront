@@ -3,6 +3,9 @@ import tkinter as tk
 import matplotlib.pyplot as plt
 import math
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import subprocess
+import matplotlib.patches as Patch
+from matplotlib.path import Path
 
 def read_file(txt):
     with open(txt) as file:
@@ -15,11 +18,9 @@ def read_file(txt):
         lines = file.readlines()
         lines = list(reversed(lines))
         
-
         for i in range(dims[0]):
             for j in range(dims[1]):
                 char = lines[i][j]
-                reversed_char = lines[i][j]
                 if char == 's':
                     start = [j,i]
                     dist_s[i][j] = 0
@@ -95,5 +96,93 @@ def gradient_plot(fig, ax_dist, map, dist_transform, dist_transform_obstacles, p
 
     ax_dist.scatter(point[0]+0.5,point[1]+0.5, c=color, s=200, zorder=100, edgecolors='black')
 
-
     fig.colorbar(im, cax=cax, orientation='vertical')
+
+def circle_around(x, y):
+    r = 1
+    i, j = x-1, y-1
+    while True:
+        while i < x+r:
+            i += 1
+            yield r, (i, j)
+        while j < y+r:
+            j += 1
+            yield r, (i, j)
+        while i > x-r:
+            i -= 1
+            yield r, (i, j)
+        while j > y-r:
+            j -= 1
+            yield r, (i, j)
+        r += 1
+        j -= 1
+        yield r, (i, j)
+
+def get_valid_point(iter, obstacles, width, height):
+    while True:
+        point = next(iter)
+        if point[1][0] < width and \
+            point[1][1] < height and \
+            point[1][0] >= 0 and \
+            point[1][1] >= 0 and \
+            obstacles[point[1][1]][point[1][0]] != 1:
+            return point[1]
+        # ax_map.scatter(point_s[1][0],point_s[1][1])
+        # visited_s.append(point_s[1])
+
+
+def add_video(canvas_width, canvas_height,name):
+    outf = str(name+'.mp4')
+    # Open an ffmpeg process
+    cmdstring = ('ffmpeg', 
+        '-y', '-r', '16', # overwrite, 30fps
+        '-s', '%dx%d' % (canvas_width, canvas_height), # size of image string
+        '-pix_fmt', 'argb', # format
+        '-f', 'rawvideo',  '-i', '-', # tell ffmpeg to expect raw video from the pipe
+        '-vb', '20000k',
+        '-hide_banner','-loglevel','error',
+        '-vcodec', 'libx264', outf) # output encoding
+    return subprocess.Popen(cmdstring, stdin=subprocess.PIPE)
+
+def eucl_dist(p1,p2):
+    """ Scalar distance from p1 to p2 (without direction)"""
+    return math.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)
+
+
+def hexcolor(value, reverse=False):
+    if value <= 50:
+        r = 255
+        g = int(255*value/50)
+        b = 0
+    else:
+        r = int(255*(100-value)/50)
+        g = 255
+        b = 0
+    if reverse:
+        r, g = g, r
+    return "#%s%s%s" % tuple([hex(c)[2:].rjust(2, "0") for c in (r, g, b)])
+
+def neighbors(map, x, y, width, height):
+    return [(i,j) for j in range(y-1,y+2)
+                    for i in range(x-1,x+2)
+                        if i >= 0 and i < width and j >= 0 and j < height
+                        if (map[j][i] == 1) and (j!=y or i!=x)]
+
+def get_best(list_p,dist_p):
+    min = 100000000000000
+    best = None
+    for p in list_p:
+        new_dist = dist_p[p[1]][p[0]]
+        if new_dist < min:
+            min = new_dist
+            best = p
+    return best
+
+def add_line(p1,p2):
+    verts = [p1, p2]
+    codes = [Path.MOVETO,Path.LINETO]
+    path = Path(verts, codes)
+    return Patch.PathPatch(path, color='black', lw=2, zorder=20)
+
+def add_dot(p):
+    return Patch.Circle(xy=p, radius=0.1, color='black', lw=2, zorder=20, alpha=0.75)
