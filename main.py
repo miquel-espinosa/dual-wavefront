@@ -57,11 +57,14 @@ if VIDEO:
     width_video, height_video = fig.canvas.get_width_height()
     video = add_video(width_video,height_video,'video')
 
-cmap = plt.cm.hot
+
+# dir_map_s = np.matrix(np.ones((width,height))*np.inf)
+# dir_map_g = np.zeros_like(map)
 
 while not meet:
     point_s = get_valid_point(iter_s, obstacles, width, height)
     point_g = get_valid_point(iter_g, obstacles, width, height)
+
     visited_s.append(point_s)
     visited_g.append(point_g)
 
