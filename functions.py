@@ -1,3 +1,4 @@
+from xml.dom import NO_DATA_ALLOWED_ERR
 import numpy as np
 import tkinter as tk
 import matplotlib.pyplot as plt
@@ -6,6 +7,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import subprocess
 import matplotlib.patches as Patch
 from matplotlib.path import Path
+from node import Node
 
 def read_file(txt):
     with open(txt) as file:
@@ -162,11 +164,19 @@ def hexcolor(value, reverse=False):
         r, g = g, r
     return "#%s%s%s" % tuple([hex(c)[2:].rjust(2, "0") for c in (r, g, b)])
 
-def neighbors(map, x, y, width, height):
-    return [(i,j) for j in range(y-1,y+2)
-                    for i in range(x-1,x+2)
-                        if i >= 0 and i < width and j >= 0 and j < height
-                        if (map[j][i] == 1) and (j!=y or i!=x)]
+def neighbors(map, root, current, width, height):
+    x = current.xy[0]
+    y = current.xy[1]
+    node_cost = current.cost
+    neig = []
+    for j in range(y-1,y+2):
+        for i in range(x-1,x+2):
+            if i >= 0 and i < width and j >= 0 and j < height: # Check inside bounds
+                if (map[j][i] == 1) and (j!=y or i!=x): # Check if obstacle or itself
+                    # if DIAGONALS:
+                    if root.find((i,j)) == None: # If does not exist in current tree
+                        neig.append(Node((i,j), cost=node_cost+1))
+    return neig
 
 def get_best(list_p,dist_p):
     min = 100000000000000
