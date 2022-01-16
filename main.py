@@ -42,6 +42,9 @@ if GRADIENT_PLOTS:
     ax_dist_s.axis('off')
     ax_dist_g.axis('off')
 
+ax_map.get_xaxis().set_visible(False)
+ax_map.get_yaxis().set_visible(False)
+
 visited_s = [tuple(start)]
 visited_g = [goal]
 

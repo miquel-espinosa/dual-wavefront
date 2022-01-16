@@ -64,8 +64,8 @@ int SetGrid(char **grid){
             grid[i][j]='o';
     }
     // Se establecen la entrada y la salida del laberinto.
-    grid[0][1] = '-'; 
-    grid[filas-1][columnas-2] = '-';
+    grid[0][1] = 's'; 
+    grid[filas-1][columnas-2] = 'g';
     
     return 0;
 }

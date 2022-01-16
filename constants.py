@@ -1,6 +1,6 @@
-VIDEO = False
-ANIMATION = False
+VIDEO = True
+ANIMATION = True
 DIAGONALS = False # Diagonals not working yet
 GRADIENT_PLOTS = False
-VIDEO_NAME = 'otro'
-INPUT_FILE_NAME = 'laberinto.txt'
+VIDEO_NAME = 'videos/dots'
+INPUT_FILE_NAME = 'maps/dots.txt'
