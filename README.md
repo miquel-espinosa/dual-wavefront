@@ -5,9 +5,9 @@ A tree-based algorithm with two wavefronts for path-planning in an unknown discr
 ## Demos
 Some demos of the output generated are shown in the following animations (created with Matplotlib).
 ### Simple block scenario
-![Alt Text](https://github.com/miquel-espinosa/dual-wavefront/blob/master/videos/gifs/random.gif?raw=true)
-### Random blocks map
 ![Alt Text](https://github.com/miquel-espinosa/dual-wavefront/blob/master/videos/gifs/simple.gif?raw=true) 
+### Random blocks map
+![Alt Text](https://github.com/miquel-espinosa/dual-wavefront/blob/master/videos/gifs/random.gif?raw=true)
 ### Laberynths
 ![Alt Text](https://github.com/miquel-espinosa/dual-wavefront/blob/master/videos/gifs/laberinto2.gif?raw=true)
 ![Alt Text](https://github.com/miquel-espinosa/dual-wavefront/blob/master/videos/gifs/laberinto1.gif?raw=true)
