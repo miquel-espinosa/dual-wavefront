@@ -17,3 +17,9 @@ class Node(object):
             n = node.find(xy)
             if n: return n
         return None
+
+    # def remove_son(self, xy):
+    #     for child in self.children:
+    #         if child.xy == xy:
+    #             self.children.remove(child)
+    #             break

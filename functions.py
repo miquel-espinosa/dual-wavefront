@@ -1,4 +1,4 @@
-from xml.dom import NO_DATA_ALLOWED_ERR
+from shutil import get_archive_formats
 import numpy as np
 import tkinter as tk
 import matplotlib.pyplot as plt
@@ -8,6 +8,7 @@ import subprocess
 import matplotlib.patches as Patch
 from matplotlib.path import Path
 from node import Node
+from constants import DIAGONALS, GRADIENT_PLOTS
 
 def read_file(txt):
     with open(txt) as file:
@@ -51,10 +52,9 @@ def get_screen_dimensions():
 
 
 def get_plots():
-    
-    fig, axd = plt.subplot_mosaic([['ax_map', 'ax_dist_s'],
-                               ['ax_map', 'ax_dist_g']])
-    
+    if GRADIENT_PLOTS: fig, axd = plt.subplot_mosaic([['ax_map', 'ax_dist_s'],['ax_map', 'ax_dist_g']])
+    else: fig, ax = plt.subplots()
+
     fig.tight_layout()
 
     fig.subplots_adjust(bottom=0.03, top=0.97, left=0.03, right=0.97)
@@ -63,11 +63,14 @@ def get_plots():
     width_in, height_in = get_screen_dimensions()
     fig.set_size_inches(round(width_in)-1,round(height_in)-1)
 
-    return fig, (axd['ax_map'], axd['ax_dist_s'], axd['ax_dist_g'])
+    if GRADIENT_PLOTS: return fig, (axd['ax_map'], axd['ax_dist_s'], axd['ax_dist_g'])
+    else: return fig, ax
+        
 
-def gradient_plot(fig, ax_dist, map, dist_transform, dist_transform_obstacles, point, color):
-    horizontal_min, horizontal_max, horizontal_stepsize = 0, 23, 1
-    vertical_min, vertical_max, vertical_stepsize = 0, 10, 1
+
+def gradient_plot(fig, ax_dist, map, dist_transform, dist_transform_obstacles, point, color, width, height):
+    horizontal_min, horizontal_max, horizontal_stepsize = 0, width, 1
+    vertical_min, vertical_max, vertical_stepsize = 0, height, 1
 
     horizontal_dist = horizontal_max-horizontal_min
     vertical_dist = vertical_max-vertical_min
@@ -151,15 +154,17 @@ def eucl_dist(p1,p2):
     return math.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)
 
 
-def hexcolor(value, reverse=False):
-    if value <= 50:
-        r = 255
-        g = int(255*value/50)
-        b = 0
-    else:
-        r = int(255*(100-value)/50)
-        g = 255
-        b = 0
+def hexcolor(value, maximum, reverse=False):
+    # if value <= 50:
+    r = 255
+    g = min(int(255*value/maximum),255)
+    b = 0
+        # print("here1")
+    # else:
+    #     r = int(255*(100-value)/50)
+    #     g = 255
+    #     b = 0
+    #     print("here2")
     if reverse:
         r, g = g, r
     return "#%s%s%s" % tuple([hex(c)[2:].rjust(2, "0") for c in (r, g, b)])
@@ -173,9 +178,20 @@ def neighbors(map, root, current, width, height):
         for i in range(x-1,x+2):
             if i >= 0 and i < width and j >= 0 and j < height: # Check inside bounds
                 if (map[j][i] == 1) and (j!=y or i!=x): # Check if obstacle or itself
-                    # if DIAGONALS:
-                    if root.find((i,j)) == None: # If does not exist in current tree
-                        neig.append(Node((i,j), cost=node_cost+1))
+                    if (j!=y and i!=x): # If it is a diagonal
+                        if DIAGONALS: 
+                            if root.find((i,j)) == None: # If does not exist in current tree
+                                neig.append(Node((i,j), cost=node_cost+1.5))
+                    else: 
+                        found = root.find((i,j))
+                        if found  == None: # If does not exist in current tree
+                            neig.append(Node((i,j), cost=node_cost+1))
+                        # elif found.root == False: # If it exists a shorter path
+                        #     if found.parent.cost % 1 == 0.5:
+                        #         found.parent = current
+                        #         found.parent.remove_son((i,j))
+                        #         neig.append(Node((i,j), cost=node_cost+1))
+
     return neig
 
 def get_best(list_p,dist_p):
