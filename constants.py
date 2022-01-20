@@ -1,6 +1,14 @@
-VIDEO = True
+# Constants for animations
+VIDEO = False
 ANIMATION = True
-DIAGONALS = False # Diagonals not working yet
+TREE_EXTENSION_ANIMATION = True
+
+# Constant for gradient plots
 GRADIENT_PLOTS = False
-VIDEO_NAME = 'videos/dots'
-INPUT_FILE_NAME = 'maps/dots.txt'
+
+# Constants for saving videos and plots
+VIDEO_NAME = 'videos/simpless'
+INPUT_FILE_NAME = 'maps/simple.txt'
+
+# Enable disable diagonal navigation
+DIAGONALS = False # TODO: diagonals not working yet

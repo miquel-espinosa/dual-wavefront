@@ -6,7 +6,7 @@ from scipy import ndimage
 from functions import add_line, eucl_dist, get_best, get_plots, gradient_plot, read_file, circle_around, get_valid_point, hexcolor, add_video, neighbors, add_dot
 import copy
 from node import Node
-from constants import ANIMATION, GRADIENT_PLOTS, INPUT_FILE_NAME, VIDEO, VIDEO_NAME
+from constants import ANIMATION, GRADIENT_PLOTS, INPUT_FILE_NAME, TREE_EXTENSION_ANIMATION, VIDEO, VIDEO_NAME
 
 start, goal, map, obstacles, dist_s, dist_g = read_file(INPUT_FILE_NAME)
 
@@ -98,6 +98,13 @@ while not meet:
     ax_map.add_artist(Rectangle(xy=(current_s.xy[0]-0.5,current_s.xy[1]-0.5), color=color_s, alpha=0.6, width=1, height=1))
     ax_map.add_artist(Rectangle(xy=(current_g.xy[0]-0.5,current_g.xy[1]-0.5), color=color_g, alpha=0.6, width=1, height=1))
 
+    if not current_g.root and TREE_EXTENSION_ANIMATION and ANIMATION:
+        treelinecolor = 'snow'
+        ax_map.add_patch(add_line(current_g.xy,current_g.parent.xy, treelinecolor, alpha=0.5))
+        ax_map.add_patch(add_dot(current_g.xy, treelinecolor))
+        ax_map.add_patch(add_line(current_s.xy,current_s.parent.xy, treelinecolor, alpha=0.5))
+        ax_map.add_patch(add_dot(current_s.xy, treelinecolor))
+
     if ANIMATION:
         plt.pause(0.001)
         
@@ -106,7 +113,7 @@ while not meet:
         video.stdin.write(string) # Write to pipe
 
 ax_map.add_artist(Rectangle(xy=(intersect_point[0]-0.5,intersect_point[1]-0.5), color='yellow', alpha=0.8, width=1, height=1, ec='k', lw=2))
-ax_map.add_patch(add_dot(intersect_point))
+ax_map.add_patch(add_dot(intersect_point, 'black'))
 
 if ANIMATION:
     plt.pause(0.001)
@@ -124,14 +131,13 @@ home_g = False
 
 while not home_s or not home_g:
     if current_point_s.xy != tuple(start):
-        ax_map.add_patch(add_line(current_point_s.xy,current_point_s.parent.xy))
-        ax_map.add_patch(add_dot(current_point_s.parent.xy))
-        ax_map.add_patch(add_dot(current_point_s.parent.xy))
+        ax_map.add_patch(add_line(current_point_s.xy,current_point_s.parent.xy, 'black', alpha=1))
+        ax_map.add_patch(add_dot(current_point_s.parent.xy, 'black'))
         current_point_s = current_point_s.parent
 
     if current_point_g.xy != tuple(goal):
-        ax_map.add_patch(add_line(current_point_g.xy,current_point_g.parent.xy))
-        ax_map.add_patch(add_dot(current_point_g.parent.xy))
+        ax_map.add_patch(add_line(current_point_g.xy,current_point_g.parent.xy, 'black', alpha=1))
+        ax_map.add_patch(add_dot(current_point_g.parent.xy, 'black'))
         current_point_g = current_point_g.parent
 
     home_s = (current_point_s.xy == tuple(start))

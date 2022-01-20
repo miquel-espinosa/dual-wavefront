@@ -204,11 +204,11 @@ def get_best(list_p,dist_p):
             best = p
     return best
 
-def add_line(p1,p2):
+def add_line(p1,p2, color, alpha):
     verts = [p1, p2]
     codes = [Path.MOVETO,Path.LINETO]
     path = Path(verts, codes)
-    return Patch.PathPatch(path, color='black', lw=2, zorder=20)
+    return Patch.PathPatch(path, color=color, lw=2, zorder=20, alpha=alpha)
 
-def add_dot(p):
-    return Patch.Circle(xy=p, radius=0.1, color='black', lw=2, zorder=20, alpha=0.75)
+def add_dot(p, color):
+    return Patch.Circle(xy=p, radius=0.1, color=color, lw=2, zorder=20, alpha=0.75)
