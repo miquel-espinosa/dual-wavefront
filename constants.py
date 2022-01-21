@@ -7,9 +7,9 @@ TREE_EXTENSION_ANIMATION = False
 GRADIENT_PLOTS = False
 
 # Constants for saving videos and plots
-VIDEO_NAME = 'videos/room'
-OUTPUT_FILE_NAME = 'images/room'
-INPUT_FILE_NAME = 'maps/room.txt'
+VIDEO_NAME = 'videos/holes'
+OUTPUT_FILE_NAME = 'images/holes'
+INPUT_FILE_NAME = 'maps/holes.txt'
 
 # Enable disable diagonal navigation
 DIAGONALS = False # TODO: diagonals not working yet
