@@ -1,14 +1,14 @@
 # Constants for animations
-VIDEO = True
+VIDEO = False
 ANIMATION = True
-TREE_EXTENSION_ANIMATION = True
+TREE_EXTENSION_ANIMATION = False
 
 # Constant for gradient plots
 GRADIENT_PLOTS = False
 
 # Constants for saving videos and plots
-VIDEO_NAME = 'videos/simple-tree'
-OUTPUT_FILE_NAME = 'images/simple-tree'
+VIDEO_NAME = 'videos/simple'
+OUTPUT_FILE_NAME = 'images/simple'
 INPUT_FILE_NAME = 'maps/simple.txt'
 
 # Enable disable diagonal navigation
