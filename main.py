@@ -1,38 +1,35 @@
 import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
-
 import numpy as np
+from matplotlib.patches import Rectangle
 from scipy import ndimage
-from functions import add_line, eucl_dist, get_best, get_plots, gradient_plot, read_file, circle_around, get_valid_point, hexcolor, add_video, neighbors, add_dot
-import copy
 from node import Node
-from constants import ANIMATION, GRADIENT_PLOTS, INPUT_FILE_NAME, TREE_EXTENSION_ANIMATION, VIDEO, VIDEO_NAME
+from functions import *
+from constants import *
 
 start, goal, map, obstacles, dist_s, dist_g = read_file(INPUT_FILE_NAME)
 
 width = len(map[0])
 height = len(map)
 
-dist_transform_s = ndimage.distance_transform_edt(dist_s)
-dist_transform_g = ndimage.distance_transform_edt(dist_g)
-max_value_s = np.max(dist_transform_s)
-max_value_g = np.max(dist_transform_g)
-dist_transform_s_obstacles = dist_transform_s+obstacles*-max_value_s
-dist_transform_g_obstacles = dist_transform_g+obstacles*-max_value_g
-
-
-
 # Define plots
-if GRADIENT_PLOTS: fig, (ax_map, ax_dist_s, ax_dist_g) = get_plots()
+if GRADIENT_PLOTS:
+    fig, (ax_map, ax_dist_s, ax_dist_g) = get_plots()
+    dist_transform_s = ndimage.distance_transform_edt(dist_s)
+    dist_transform_g = ndimage.distance_transform_edt(dist_g)
+    max_value_s = np.max(dist_transform_s)
+    max_value_g = np.max(dist_transform_g)
+    dist_transform_s_obstacles = dist_transform_s+obstacles*-max_value_s
+    dist_transform_g_obstacles = dist_transform_g+obstacles*-max_value_g
 else: fig, ax_map = get_plots()
 
-# Map (black and white)
+# Customize matplotlib axis
 ax_map.imshow(map, cmap=plt.cm.gray, origin='lower')
-
 ax_map.scatter(*start, c='r', s=200, edgecolors='black')
 ax_map.annotate('START', xy=(start[0]-0.5,start[1]+0.5))
 ax_map.scatter(*goal, c='lime', s=200, edgecolors='black')
 ax_map.annotate('GOAL', xy=(goal[0]-0.5,goal[1]+0.5))
+ax_map.get_xaxis().set_visible(False)
+ax_map.get_yaxis().set_visible(False)
 
 if GRADIENT_PLOTS:
     gradient_plot(fig,ax_dist_s,map,dist_transform_s,dist_transform_s_obstacles, start, 'r', width, height)
@@ -42,17 +39,6 @@ if GRADIENT_PLOTS:
     ax_dist_s.axis('off')
     ax_dist_g.axis('off')
 
-ax_map.get_xaxis().set_visible(False)
-ax_map.get_yaxis().set_visible(False)
-
-visited_s = [tuple(start)]
-visited_g = [goal]
-
-iter_s = circle_around(*start)
-iter_g = circle_around(*goal)
-
-
-meet = False
 
 if VIDEO:
     win = fig.canvas.window()
@@ -60,12 +46,13 @@ if VIDEO:
     width_video, height_video = fig.canvas.get_width_height()
     video = add_video(width_video,height_video,VIDEO_NAME)
 
-
+# Initialize trees
 root_s = Node(xy=tuple(start), root=True)
 root_g = Node(xy=tuple(goal), root=True)
 queue_s = [root_s]
 queue_g = [root_g]
 intersect_point = None
+meet = False
 
 while not meet:
     current_s = queue_s.pop(0) # Extract first element
@@ -162,4 +149,5 @@ if VIDEO:
 
 plt.show(block=False)
 plt.pause(3)
+fig.savefig(OUTPUT_FILE_NAME, bbox_inches="tight")
 plt.close()

@@ -1,4 +1,3 @@
-from shutil import get_archive_formats
 import numpy as np
 import tkinter as tk
 import matplotlib.pyplot as plt
@@ -103,38 +102,6 @@ def gradient_plot(fig, ax_dist, map, dist_transform, dist_transform_obstacles, p
 
     fig.colorbar(im, cax=cax, orientation='vertical')
 
-def circle_around(x, y):
-    r = 1
-    i, j = x-1, y-1
-    while True:
-        while i < x+r:
-            i += 1
-            yield r, (i, j)
-        while j < y+r:
-            j += 1
-            yield r, (i, j)
-        while i > x-r:
-            i -= 1
-            yield r, (i, j)
-        while j > y-r:
-            j -= 1
-            yield r, (i, j)
-        r += 1
-        j -= 1
-        yield r, (i, j)
-
-def get_valid_point(iter, obstacles, width, height):
-    while True:
-        point = next(iter)
-        if point[1][0] < width and \
-            point[1][1] < height and \
-            point[1][0] >= 0 and \
-            point[1][1] >= 0 and \
-            obstacles[point[1][1]][point[1][0]] != 1:
-            return point[1]
-        # ax_map.scatter(point_s[1][0],point_s[1][1])
-        # visited_s.append(point_s[1])
-
 
 def add_video(canvas_width, canvas_height,name):
     outf = str(name+'.mp4')
@@ -153,18 +120,10 @@ def eucl_dist(p1,p2):
     """ Scalar distance from p1 to p2 (without direction)"""
     return math.sqrt((p1[0]-p2[0])**2+(p1[1]-p2[1])**2)
 
-
 def hexcolor(value, maximum, reverse=False):
-    # if value <= 50:
     r = 255
     g = min(int(255*value/maximum),255)
     b = 0
-        # print("here1")
-    # else:
-    #     r = int(255*(100-value)/50)
-    #     g = 255
-    #     b = 0
-    #     print("here2")
     if reverse:
         r, g = g, r
     return "#%s%s%s" % tuple([hex(c)[2:].rjust(2, "0") for c in (r, g, b)])
@@ -193,16 +152,6 @@ def neighbors(map, root, current, width, height):
                         #         neig.append(Node((i,j), cost=node_cost+1))
 
     return neig
-
-def get_best(list_p,dist_p):
-    min = 100000000000000
-    best = None
-    for p in list_p:
-        new_dist = dist_p[p[1]][p[0]]
-        if new_dist < min:
-            min = new_dist
-            best = p
-    return best
 
 def add_line(p1,p2, color, alpha):
     verts = [p1, p2]
